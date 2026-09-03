@@ -7,17 +7,30 @@ public final class PocLlmClient implements LlmClient {
 
     @Override
     public String generateAnalysisPlan(LlmPlanRequest request) {
+        boolean travelRequest = request.businessRequest().contains("여행")
+                || request.businessRequest().contains("해외");
+        return travelRequest
+                ? plan("PLAN-POC-LLM-TRAVEL", "TRAVEL_POTENTIAL_CUSTOMER", "TRAVEL", "250000")
+                : plan("PLAN-POC-LLM-COFFEE", "COFFEE_HEAVY_USER", "CAFE", "100000");
+    }
+
+    private static String plan(
+            String planId,
+            String segmentCode,
+            String category,
+            String threshold
+    ) {
         return """
                 {
-                  "planId": "PLAN-POC-LLM-COFFEE",
+                  "planId": "%s",
                   "planVersion": "1.0",
-                  "segmentCode": "COFFEE_HEAVY_USER",
+                  "segmentCode": "%s",
                   "period": { "type": "RELATIVE_MONTH", "value": 3 },
                   "conditions": [{
-                    "category": "CAFE",
+                    "category": "%s",
                     "metric": "MONTHLY_AVG_AMOUNT",
                     "operator": "GTE",
-                    "value": 100000,
+                    "value": %s,
                     "currency": "KRW"
                   }],
                   "toolSteps": [
@@ -29,11 +42,11 @@ public final class PocLlmClient implements LlmClient {
                   ],
                   "productMatching": {
                     "productType": "CREDIT_CARD",
-                    "benefitCategory": "CAFE",
+                    "benefitCategory": "%s",
                     "rankingMetric": "EXPECTED_ANNUAL_BENEFIT"
                   },
                   "policyStatus": "CURRENTLY_ALLOWED"
                 }
-                """;
+                """.formatted(planId, segmentCode, category, threshold, category);
     }
 }

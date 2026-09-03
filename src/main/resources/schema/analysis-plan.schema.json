@@ -52,7 +52,7 @@
         "required": ["category", "metric", "operator", "value", "currency"],
         "properties": {
           "category": {
-            "enum": ["CAFE"]
+            "enum": ["CAFE", "TRAVEL"]
           },
           "metric": {
             "const": "MONTHLY_AVG_AMOUNT"
@@ -93,7 +93,7 @@
           "const": "CREDIT_CARD"
         },
         "benefitCategory": {
-          "enum": ["CAFE"]
+          "enum": ["CAFE", "TRAVEL"]
         },
         "rankingMetric": {
           "const": "EXPECTED_ANNUAL_BENEFIT"

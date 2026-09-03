@@ -76,7 +76,13 @@ public class PocPlatformConfiguration {
                 approved("T-06", "CUST-ANON-B", "2026-09-02", "110000"),
                 approved("T-07", "CUST-ANON-C", "2026-07-12", "20000"),
                 approved("T-08", "CUST-ANON-C", "2026-08-12", "20000"),
-                approved("T-09", "CUST-ANON-C", "2026-09-03", "20000")
+                approved("T-09", "CUST-ANON-C", "2026-09-03", "20000"),
+                travel("T-10", "CUST-ANON-D", "2026-07-15", "600000"),
+                travel("T-11", "CUST-ANON-D", "2026-08-15", "600000"),
+                travel("T-12", "CUST-ANON-D", "2026-09-02", "600000"),
+                travel("T-13", "CUST-ANON-E", "2026-07-20", "300000"),
+                travel("T-14", "CUST-ANON-E", "2026-08-20", "300000"),
+                travel("T-15", "CUST-ANON-E", "2026-09-03", "300000")
         ));
     }
 
@@ -84,7 +90,9 @@ public class PocPlatformConfiguration {
     InMemoryCardProductRepository cardProductRepository() {
         return new InMemoryCardProductRepository(List.of(
                 product("CARD-A", "Coffee Premium Card", "0.10", "10000", "300000"),
-                product("CARD-B", "Coffee Everyday Card", "0.05", "20000", "0")
+                product("CARD-B", "Coffee Everyday Card", "0.05", "20000", "0"),
+                travelProduct("TRAVEL-CARD-A", "Global Premium Card", "0.03", "30000", "300000"),
+                travelProduct("TRAVEL-CARD-B", "Global Everyday Card", "0.02", "50000", "0")
         ));
     }
 
@@ -93,7 +101,9 @@ public class PocPlatformConfiguration {
         return new PocPreviousMonthSpendProvider(Map.of(
                 "CUST-ANON-A", new BigDecimal("400000"),
                 "CUST-ANON-B", new BigDecimal("100000"),
-                "CUST-ANON-C", new BigDecimal("500000")
+                "CUST-ANON-C", new BigDecimal("500000"),
+                "CUST-ANON-D", new BigDecimal("400000"),
+                "CUST-ANON-E", new BigDecimal("100000")
         ));
     }
 
@@ -209,6 +219,44 @@ public class PocPlatformConfiguration {
                 new BigDecimal(amount),
                 TransactionStatus.APPROVED,
                 null
+        );
+    }
+
+    private static CardTransaction travel(
+            String transactionId,
+            String customerKey,
+            String occurredOn,
+            String amount
+    ) {
+        return new CardTransaction(
+                transactionId,
+                customerKey,
+                LocalDate.parse(occurredOn),
+                ConsumptionCategory.TRAVEL,
+                new BigDecimal(amount),
+                TransactionStatus.APPROVED,
+                null
+        );
+    }
+
+    private static CardProduct travelProduct(
+            String productId,
+            String name,
+            String discountRate,
+            String monthlyLimit,
+            String minimumPreviousMonthSpend
+    ) {
+        return new CardProduct(
+                productId,
+                name,
+                ProductSaleStatus.ON_SALE,
+                LocalDate.of(2026, 1, 1),
+                LocalDate.of(2026, 12, 31),
+                ConsumptionCategory.TRAVEL,
+                new BigDecimal(discountRate),
+                new BigDecimal(monthlyLimit),
+                new BigDecimal(minimumPreviousMonthSpend),
+                true
         );
     }
 

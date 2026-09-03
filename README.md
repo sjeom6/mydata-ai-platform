@@ -1,6 +1,6 @@
 # mydata-ai-platform
 
-마이데이터 사업 아이디어를 검증된 `AnalysisPlan`과 허용된 Data Tool 조합으로 실행하는 Java 21 / Spring Boot PoC입니다. 현재 예제는 최근 3개월 카페 소비 고객을 선별하고 판매 가능한 카드의 예상 연간 혜택을 계산해 추천합니다.
+마이데이터 사업 아이디어를 검증된 `AnalysisPlan`과 허용된 Data Tool 조합으로 실행하는 Java 21 / Spring Boot PoC입니다. 현재 예제는 최근 3개월 카페 또는 여행 소비 고객을 선별하고 판매 가능한 카드의 예상 연간 혜택을 계산해 추천합니다.
 
 ## 설계 원칙
 
@@ -44,6 +44,12 @@ Invoke-RestMethod -Method Post `
 - `tool`: 소비 집계, 고객군 필터, 상품 검색, 혜택 계산, 추천 순위
 - `audit`: 요청부터 Tool 실행 결과까지의 최소 감사 기록
 - `support`: PoC 합성 데이터, Mock LLM, Spring 설정
+
+## 확장성 검증
+
+- 카페 카드 추천과 해외여행 카드 추천이 동일한 5개 Data Tool 순서를 사용합니다.
+- 두 번째 Use Case는 신규 업무 Tool이나 전용 계산 로직 없이 카테고리 allowlist, 합성 데이터, Plan 설정만 확장했습니다.
+- 여행/해외 키워드가 포함된 자연어 요청은 `TRAVEL` Plan으로 변환되며 나머지는 PoC 기본 `CAFE` Plan으로 처리됩니다.
 
 ## PoC 한계
 

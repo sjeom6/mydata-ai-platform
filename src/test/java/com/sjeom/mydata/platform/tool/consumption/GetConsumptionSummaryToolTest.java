@@ -81,7 +81,7 @@ class GetConsumptionSummaryToolTest {
         );
 
         ToolExecutionResult<ConsumptionSummary> result = tool.execute(
-                new ConsumptionSummaryInput(3, ConsumptionCategory.TRAVEL),
+                new ConsumptionSummaryInput(3, ConsumptionCategory.DINING),
                 context(10)
         );
 

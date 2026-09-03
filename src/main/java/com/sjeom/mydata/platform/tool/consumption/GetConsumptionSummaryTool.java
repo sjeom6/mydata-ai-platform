@@ -20,7 +20,7 @@ public final class GetConsumptionSummaryTool
     public static final String NAME = "GET_CONSUMPTION_SUMMARY";
     public static final int MAX_MONTHS = 12;
 
-    private static final Set<ConsumptionCategory> ALLOWED_CATEGORIES = Set.of(ConsumptionCategory.CAFE);
+    private static final Set<ConsumptionCategory> ALLOWED_CATEGORIES = Set.of(ConsumptionCategory.CAFE, ConsumptionCategory.TRAVEL);
 
     private final ConsumptionTransactionRepository repository;
     private final Clock clock;
