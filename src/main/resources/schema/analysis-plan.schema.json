@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mydata-ai-platform.internal/schema/analysis-plan.schema.json",
+  "title": "AnalysisPlan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "planId",
+    "planVersion",
+    "segmentCode",
+    "period",
+    "conditions",
+    "toolSteps",
+    "productMatching",
+    "policyStatus"
+  ],
+  "properties": {
+    "planId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "planVersion": {
+      "const": "1.0"
+    },
+    "segmentCode": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]{0,99}$"
+    },
+    "period": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "value"],
+      "properties": {
+        "type": {
+          "const": "RELATIVE_MONTH"
+        },
+        "value": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        }
+      }
+    },
+    "conditions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["category", "metric", "operator", "value", "currency"],
+        "properties": {
+          "category": {
+            "enum": ["CAFE"]
+          },
+          "metric": {
+            "const": "MONTHLY_AVG_AMOUNT"
+          },
+          "operator": {
+            "const": "GTE"
+          },
+          "value": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100000000
+          },
+          "currency": {
+            "const": "KRW"
+          }
+        }
+      }
+    },
+    "toolSteps": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "prefixItems": [
+        { "const": "GET_CONSUMPTION_SUMMARY" },
+        { "const": "FILTER_CUSTOMER_SEGMENT" },
+        { "const": "SEARCH_CARD_PRODUCTS" },
+        { "const": "CALCULATE_EXPECTED_BENEFIT" },
+        { "const": "RANK_RECOMMENDATIONS" }
+      ],
+      "items": false
+    },
+    "productMatching": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["productType", "benefitCategory", "rankingMetric"],
+      "properties": {
+        "productType": {
+          "const": "CREDIT_CARD"
+        },
+        "benefitCategory": {
+          "enum": ["CAFE"]
+        },
+        "rankingMetric": {
+          "const": "EXPECTED_ANNUAL_BENEFIT"
+        }
+      }
+    },
+    "policyStatus": {
+      "enum": [
+        "CURRENTLY_ALLOWED",
+        "PILOT_OR_SANDBOX",
+        "FUTURE_POLICY",
+        "REVIEW_REQUIRED"
+      ]
+    }
+  }
+}
