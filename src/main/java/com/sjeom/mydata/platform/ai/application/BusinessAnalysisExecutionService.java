@@ -4,12 +4,14 @@ import com.sjeom.mydata.platform.ai.llm.LlmClient;
 import com.sjeom.mydata.platform.ai.llm.LlmPlanRequest;
 import com.sjeom.mydata.platform.analysis.application.AnalysisPlanExecutionFacade;
 import com.sjeom.mydata.platform.analysis.application.AnalysisRequestResult;
+import com.sjeom.mydata.platform.analysis.application.AnalysisRequestStatus;
 import com.sjeom.mydata.platform.analysis.input.AnalysisPlanInputError;
 import com.sjeom.mydata.platform.analysis.input.AnalysisPlanInputResult;
 import com.sjeom.mydata.platform.analysis.input.AnalysisPlanJsonReader;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public final class BusinessAnalysisExecutionService {
 
@@ -40,9 +42,13 @@ public final class BusinessAnalysisExecutionService {
         String generatedPlan = null;
 
         for (int attempt = 1; attempt <= MAX_GENERATION_ATTEMPTS; attempt++) {
-            generatedPlan = llmClient.generateAnalysisPlan(
-                    new LlmPlanRequest(businessRequest, attempt, validationErrors)
-            );
+            try {
+                generatedPlan = llmClient.generateAnalysisPlan(
+                        new LlmPlanRequest(businessRequest, attempt, validationErrors)
+                );
+            } catch (RuntimeException exception) {
+                return llmFailure();
+            }
             AnalysisPlanInputResult input = jsonReader.read(generatedPlan);
             if (input.isAccepted()) {
                 return executionFacade.execute(
@@ -56,6 +62,17 @@ public final class BusinessAnalysisExecutionService {
 
         return executionFacade.execute(
                 generatedPlan, requesterId, purpose, dataAsOf, maxResultCount
+        );
+    }
+
+    private static AnalysisRequestResult llmFailure() {
+        return new AnalysisRequestResult(
+                UUID.randomUUID(),
+                AnalysisRequestStatus.FAILED,
+                null,
+                null,
+                List.of(),
+                List.of("LLM_GENERATION_FAILED")
         );
     }
 
