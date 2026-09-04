@@ -192,6 +192,7 @@ public class PocPlatformConfiguration {
     }
 
     @Bean
+    @Profile("!private-llm")
     LlmClient llmClient() {
         return new PocLlmClient();
     }

@@ -77,6 +77,10 @@ public final class BusinessAnalysisExecutionService {
     }
 
     private static String summarize(AnalysisPlanInputError error) {
-        return error.code() + "@" + error.field();
+        String message = String.valueOf(error.message());
+        if (message.length() > 500) {
+            message = message.substring(0, 500);
+        }
+        return error.code() + "@" + error.field() + ": " + message;
     }
 }

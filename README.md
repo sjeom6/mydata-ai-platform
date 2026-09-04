@@ -37,6 +37,25 @@ Invoke-RestMethod -Method Post `
 
 검증된 Plan JSON을 직접 실행하려면 같은 헤더와 함께 `POST /api/v1/analysis-plans/execute`를 사용합니다. 선택 헤더 `X-Max-Result-Count`의 허용 범위는 1~1000이며 기본값은 100입니다.
 
+## Private LLM 연결
+
+OpenAI 호환 `POST /v1/chat/completions` 계약을 제공하는 사내 LLM은 다음 환경변수로 연결할 수 있습니다. 응답은 `choices[0].message.content`에 JSON AnalysisPlan을 반환해야 합니다.
+
+```powershell
+$env:PRIVATE_LLM_BASE_URL = 'http://private-llm.internal'
+$env:PRIVATE_LLM_MODEL = 'internal-model'
+$env:PRIVATE_LLM_API_KEY = 'optional-secret'
+$env:PRIVATE_LLM_CONNECT_TIMEOUT = '3s'
+$env:PRIVATE_LLM_READ_TIMEOUT = '30s'
+$env:PRIVATE_LLM_MAX_OUTPUT_TOKENS = '4096'
+.\gradlew.bat bootRun --args='--spring.profiles.active=poc,private-llm'
+```
+
+- `poc` 프로필만 사용하면 외부 통신 없는 `PocLlmClient`가 선택됩니다.
+- `poc,private-llm` 프로필에서는 `OpenAiCompatibleLlmClient`가 선택됩니다.
+- API 키가 비어 있으면 Authorization 헤더를 보내지 않습니다.
+- 모델 출력은 기존 JSON Schema와 allowlist 검증을 통과해야만 실행됩니다.
+
 ## 주요 패키지
 
 - `analysis`: Plan 도메인, Schema 검증, 저장, 실행 API
